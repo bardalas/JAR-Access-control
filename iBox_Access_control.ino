@@ -32,7 +32,7 @@ void setup() {
   // loadAll();
   initSyS();
 
-  // Serial.println("Welcome");
+  Serial.println(VERSION);
 
   delay(2000);
   enterDeepSleep();
@@ -50,8 +50,8 @@ void loop() {
 
       //should we lock or should we open ?
       if (isMasterTag()) {
-        report = MASTER;
         openBox("Master");  //blue
+        report = MASTER;
         //  reportToEnet(MASTER);
         //   wakeUpTime = millis() + MAX_ALOWED_UNLOCKED;
       }
@@ -90,19 +90,19 @@ void loop() {
 
     //check if time passed and box is still closed
     // if (millis() - wakeUpTime > MAX_ALOWED_UNLOCKED) {
-    Serial.println("time passed and box is still closed");
+    //    Serial.println("time passed and box is still closed");
 
     if (isBoxClosed()) {
       delay(2000);
       enterDeepSleep();
 
     } else {
-
-      //Do we need to report ?
+      //Box is open ==> Do we need to report ?
       if (report != NO_USER) {
+
         Serial.println("Reporting to enet3");
         reportToEnet(report);
-        report= NO_USER;
+        report = NO_USER;
       }
 
 
@@ -116,8 +116,9 @@ void loop() {
           delay(20);
         }
       } else {
+
         //No alarm - the box is just open
-        Serial.println("Box is open - No alarem (yet)");
+        //     Serial.println("Box is open - No alarem (yet)");
       }
       //the box is open.. wait until get close
     }
@@ -200,12 +201,12 @@ boolean isBoxLocked() {
 }
 
 void openBox(String s) {
-  openBoxTime = millis();
+
   wokeUp = false;
   Serial.println("Unlocking Box");
   lcd.clear();
-  lcd.setCursor(2, 0);
-  lcd.print("Permission");
+  // lcd.setCursor(2, 0);
+  //  lcd.print("Permission");
   lcd.setCursor(0, 1);
   lcd.print(" Access Granted! - ");
   Serial.println(s);
@@ -249,7 +250,7 @@ void reportToEnet(int user) {
   if (user != NULL) {
 
     //Send user data
-    Serial.println("User is not null:");
+    Serial.println("Bos is opened:");
 
     if (user == MASTER) {
       temp_msg.message[temp_msg.msg_len++] = '1';
@@ -289,6 +290,8 @@ void reportToEnet(int user) {
 
 
   ENet3_SSend(temp_msg.message, temp_msg.msg_len);
+
+  openBoxTime = millis();
 }
 /*
 unsigned char ENet3_SSend1(unsigned char *data, unsigned short dataLen){
